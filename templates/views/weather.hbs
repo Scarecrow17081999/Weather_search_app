@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<link rel="stylesheet" 
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    {{>headerLinks}}
+</head>
+<body>
+    {{>navbar}}
+{{!-- navbar --}}
+
+       <div class="container-fluid main_header">
+      <div class="row">
+        <div class="col-md-10 col-12 mx-auto">
+         <div class="main_container">
+            <form class="temp_form">
+
+                <input type="text" name="" id="cityName" placeholder="Enter Your City Name" autocomplete="off">
+                <input type="submit"  value="search" name="" id="submitBtn">
+            </form>
+
+            <div class="tempInformation">
+                <div class="top_layer">
+                   <p id="day">
+                       Sunday
+                   </p>
+                   <p id="today_date">12.12.2000</p>
+                </div>
+                <div class="main_layer">
+                    <p id="city_name"></p>
+                    <div class="middle_layer data_hide">
+                        <p id="temp"><span id="temp_Span"></span></p>
+
+                        <p id="temp_status"></p>
+
+                    </div>
+                </div>
+            </div>
+         </div>
+        </div>
+      </div>
+    </div>
+
+
+    {{!-- footer sectionn --}}
+    {{>footer}}
+
+</body>
+<script>
+    const submitBtn = document.getElementById("submitBtn");
+const form = document.querySelector(".temp_form");
+const cityName = document.getElementById("cityName");
+const showCityBanner = document.getElementById("city_name");
+const tempDisplay=document.getElementById("temp_Span");
+const hideList = document.querySelector('.main_layer');
+const day = document.getElementById("day");
+const date = document.getElementById("today_date");
+const tempSatus =document.getElementById("temp_status");
+const tempFunc=(weather)=>{
+console.log(weather);
+
+if(weather=='Sunny'){
+
+  tempSatus.innerHTML= `<i class="fa-solid fa-sun"></i>` 
+}
+else if(weather=='Clouds'){
+     tempSatus.innerHTML= `<i class="fa-solid fa-cloud"></i>`
+}
+else if (weather=='Storm'){
+     tempSatus.innerHTML= `<i class="fa-solid fa-poo-storm"></i>`
+
+}
+else if (weather=='Haze'){
+     tempSatus.innerHTML= `<i class="fa-solid fa-cloud-sun"></i>`
+
+}
+else if(weather=='Rain'){
+     tempSatus.innerHTML= `<i class="fa-solid fa-cloud-rain"></i>`
+}
+
+else{
+
+  tempSatus.innerHTML= `<i class="fa-solid fa-cloud"></i>`
+}
+}
+
+
+const dayAndDateFunc =()=>{
+
+    const currDay = new Date();
+    const currDayStr = currDay.getDay();
+    const currDate = currDay.getDate();
+    const currMonth = currDay.getMonth();
+    const currYear = currDay.getFullYear();
+    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+console.log(currDate,currMonth,currYear)
+day.innerText=`${weekday[currDayStr]}`;
+date.innerText=`${currDate} ${month[currMonth]} ${currYear}`
+}
+ dayAndDateFunc()
+ form.addEventListener("submit",async function (e) {
+  e.preventDefault();
+  console.log(cityName.value)
+
+  if (cityName.value === "") {
+    showCityBanner.innerText=`Please write a valid city name`;
+    tempSatus.innerHTML=``;
+    tempDisplay.innerText=``;
+   
+    return;
+  }else{
+try{
+const url =`https://api.openweathermap.org/data/2.5/weather?q=${cityName.value}&units=metric&appid=9a4dbc9037a45f8e14cb94fe5f3dda4e`
+  const response = await fetch(url);
+  const data = await response.json();
+
+
+showCityBanner.innerText=`${data.name},${data.sys.country}`;
+tempDisplay.innerText=`${data.main.temp}°C`;
+
+
+hideList.classList.remove("data_hide");
+tempFunc(data.weather[0].main)
+}catch(e){
+  alert(e);
+   hideList.classList.add("data_hide");
+  return;
+}
+
+    
+  }
+
+
+
+});
+
+
+
+</script>
+</html>
